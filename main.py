@@ -53,7 +53,7 @@ def gpt2_inference(input_ids, model, num_layers=12):
     for i in range(num_layers):
         layer = model.transformer.h[i]
         hidden_states = process_attention_sublayer(hidden_states, layer, num_heads=12, d_model=768)
-        hidden_states = process_feedforward_sublayer(hidden_states, layer, d_model=768)
+        hidden_states = process_feedforward_sublayer(hidden_states, layer)
 
     # since GPT-2 pre-normalizes, we have to do one last normalization explicitly
     hidden_states = normalize_sublayer_input(hidden_states, model.transformer.ln_f.weight, model.transformer.ln_f.bias)
@@ -151,7 +151,7 @@ def huggingface_inference(input_ids, model, tokenizer):
 
 # My implementation should be functionally identical to hf's
 def compare_implementations(input_text):
-    input_ids = prepare_input(input_text, model, tokenizer)
+    input_ids = prepare_input(input_text, tokenizer)
 
     # Your implementation
     your_logits = gpt2_inference(input_ids, model)
@@ -166,4 +166,4 @@ def compare_implementations(input_text):
     print(f"Hugging Face implementation's next token: '{hf_next_token}'")
     print(f"Match: {your_next_token == hf_next_token}")
 
-compare_implementations("Hello darkness my old")
+compare_implementations("1 2 3 4 5 6 7")
